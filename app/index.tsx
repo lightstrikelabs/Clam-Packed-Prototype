@@ -43,6 +43,8 @@ export default function HomeScreen() {
             style={styles.settingsButton} 
             onPress={handleSettingsPress}
             hitSlop={10}
+            testID="settings-button"
+            accessibilityLabel="Settings"
           >
             <Ionicons name="settings-outline" size={24} color="#fff" />
           </Pressable>

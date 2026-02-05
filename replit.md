@@ -2,12 +2,27 @@
 
 ## Overview
 
-Clam Packed Delivery is a mobile-first logistics application serving the San Juan Islands. It provides two core services:
+Clam Packed Delivery is a **white-label** mobile-first logistics application that can serve multiple island communities. It provides two core services:
 
 1. **Grocery Delivery** - Users order from partner stores (Trader Joe's, Safeway, Hela Provisions, etc.), and the service handles shopping, ferry transport, and island delivery
 2. **Water Taxi** - Inter-island transportation booking with local captains, serving as an alternative when ferries are disrupted
 
 The app targets island residents who want to save time by avoiding ferry trips for mainland shopping.
+
+### White-Label Support
+
+The app supports multiple island regions, each with their own:
+- **Islands & Map**: Dynamic island positions and shapes
+- **Stores**: Region-specific partner stores
+- **Captains**: Local water taxi operators
+- **Branding**: Custom brand name and color scheme
+
+Currently configured regions:
+1. **San Juan Islands** (Washington) - "Clam Packed"
+2. **Casco Bay Islands** (Maine) - "Casco Cargo"
+3. **Mackinac Island** (Michigan) - "Mackinac Move"
+
+Region configuration is stored in `lib/regions.ts`. Users can switch regions via the Settings screen (gear icon on home screen).
 
 ## User Preferences
 
