@@ -3,24 +3,25 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Colors } from '@/constants/colors';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const MAP_HEIGHT = SCREEN_HEIGHT * 0.65;
+const MAP_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 interface IslandLabelProps {
   name: string;
   position: 'orcas' | 'sanJuan' | 'lopez' | 'anacortes';
+  offsetTop?: number;
 }
 
-export default function IslandLabel({ name, position }: IslandLabelProps) {
+export default function IslandLabel({ name, position, offsetTop = 0 }: IslandLabelProps) {
   const getPosition = () => {
     switch (position) {
       case 'orcas':
-        return { top: MAP_HEIGHT * 0.12, left: SCREEN_WIDTH * 0.42 };
+        return { top: offsetTop + MAP_HEIGHT * 0.15, left: SCREEN_WIDTH * 0.38 };
       case 'sanJuan':
-        return { top: MAP_HEIGHT * 0.35, left: SCREEN_WIDTH * 0.12 };
+        return { top: offsetTop + MAP_HEIGHT * 0.42, left: SCREEN_WIDTH * 0.05 };
       case 'lopez':
-        return { top: MAP_HEIGHT * 0.52, left: SCREEN_WIDTH * 0.4 };
+        return { top: offsetTop + MAP_HEIGHT * 0.6, left: SCREEN_WIDTH * 0.38 };
       case 'anacortes':
-        return { top: MAP_HEIGHT * 0.68, left: SCREEN_WIDTH * 0.68 };
+        return { top: offsetTop + MAP_HEIGHT * 0.78, left: SCREEN_WIDTH * 0.6 };
       default:
         return { top: 0, left: 0 };
     }
@@ -36,19 +37,20 @@ export default function IslandLabel({ name, position }: IslandLabelProps) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
+    pointerEvents: 'none',
   },
   text: {
     fontFamily: 'Caveat_700Bold',
-    fontSize: 16,
+    fontSize: 18,
     color: Colors.text,
   },
 });

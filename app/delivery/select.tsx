@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/colors';
@@ -10,11 +10,15 @@ import Header from '@/components/ui/Header';
 import Button from '@/components/ui/Button';
 import IslandLabel from '@/components/ui/IslandLabel';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 export default function SelectIslandScreen() {
   const insets = useSafeAreaInsets();
   const { setSelectedIsland, setMode } = useApp();
   const [selected, setSelected] = useState<string | null>(null);
   const webBottomInset = Platform.OS === 'web' ? 34 : 0;
+  const webTopInset = Platform.OS === 'web' ? 67 : 0;
+  const headerHeight = insets.top + webTopInset + 50;
 
   const handleIslandPress = (islandId: string) => {
     setSelected(islandId);
@@ -45,15 +49,17 @@ export default function SelectIslandScreen() {
       />
       
       <View style={styles.mapContainer}>
-        <IslandMap
-          mode="delivery"
-          selectedIsland={selected}
-          onIslandPress={handleIslandPress}
-        />
+        <View style={{ marginTop: headerHeight }}>
+          <IslandMap
+            mode="delivery"
+            selectedIsland={selected}
+            onIslandPress={handleIslandPress}
+          />
+        </View>
         
-        <IslandLabel name="Orcas" position="orcas" />
-        <IslandLabel name="San Juan" position="sanJuan" />
-        <IslandLabel name="Lopez" position="lopez" />
+        <IslandLabel name="Orcas" position="orcas" offsetTop={headerHeight} />
+        <IslandLabel name="San Juan" position="sanJuan" offsetTop={headerHeight} />
+        <IslandLabel name="Lopez" position="lopez" offsetTop={headerHeight} />
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + webBottomInset + 16 }]}>

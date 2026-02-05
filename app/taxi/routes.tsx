@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,6 +12,9 @@ import Header from '@/components/ui/Header';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import FerryAlert from '@/components/ui/FerryAlert';
+import IslandLabel from '@/components/ui/IslandLabel';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function RoutesScreen() {
   const insets = useSafeAreaInsets();
@@ -19,6 +22,8 @@ export default function RoutesScreen() {
   const [origin, setOrigin] = useState<string | null>(rideDetails.from || null);
   const [destination, setDestination] = useState<string | null>(rideDetails.to || null);
   const webBottomInset = Platform.OS === 'web' ? 34 : 0;
+  const webTopInset = Platform.OS === 'web' ? 67 : 0;
+  const headerHeight = insets.top + webTopInset + 50;
 
   const handleLocationPress = (locationId: string) => {
     if (Platform.OS !== 'web') {
@@ -73,12 +78,19 @@ export default function RoutesScreen() {
       />
       
       <View style={styles.mapContainer}>
-        <IslandMap
-          mode="taxi"
-          origin={origin}
-          destination={destination}
-          onIslandPress={handleLocationPress}
-        />
+        <View style={{ marginTop: headerHeight }}>
+          <IslandMap
+            mode="taxi"
+            origin={origin}
+            destination={destination}
+            onIslandPress={handleLocationPress}
+          />
+        </View>
+        
+        <IslandLabel name="Orcas" position="orcas" offsetTop={headerHeight} />
+        <IslandLabel name="San Juan" position="sanJuan" offsetTop={headerHeight} />
+        <IslandLabel name="Lopez" position="lopez" offsetTop={headerHeight} />
+        <IslandLabel name="Anacortes" position="anacortes" offsetTop={headerHeight} />
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + webBottomInset + 16 }]}>

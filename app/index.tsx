@@ -15,6 +15,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { setMode, showFerryAlert, setShowFerryAlert } = useApp();
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
+  const topPadding = insets.top + webTopInset;
 
   const handleDeliveryPress = () => {
     setMode('delivery');
@@ -33,18 +34,20 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.mapContainer, { paddingTop: insets.top + webTopInset }]}>
-        <View style={styles.headerOverlay}>
+      <View style={styles.mapContainer}>
+        <View style={[styles.headerOverlay, { paddingTop: topPadding + 8 }]}>
           <Text style={styles.logo}>Island Hop</Text>
           <Text style={styles.tagline}>San Juan Islands Logistics</Text>
         </View>
         
-        <IslandMap mode="home" />
+        <View style={{ marginTop: topPadding + 60 }}>
+          <IslandMap mode="home" />
+        </View>
         
-        <IslandLabel name="Orcas" position="orcas" />
-        <IslandLabel name="San Juan" position="sanJuan" />
-        <IslandLabel name="Lopez" position="lopez" />
-        <IslandLabel name="Anacortes" position="anacortes" />
+        <IslandLabel name="Orcas" position="orcas" offsetTop={topPadding + 60} />
+        <IslandLabel name="San Juan" position="sanJuan" offsetTop={topPadding + 60} />
+        <IslandLabel name="Lopez" position="lopez" offsetTop={topPadding + 60} />
+        <IslandLabel name="Anacortes" position="anacortes" offsetTop={topPadding + 60} />
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + (Platform.OS === 'web' ? 34 : 16) }]}>
@@ -93,7 +96,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
-    paddingTop: 60,
     paddingHorizontal: 20,
     alignItems: 'center',
   },

@@ -7,8 +7,7 @@ import Animated, {
   withRepeat, 
   withTiming, 
   withSequence,
-  withDelay,
-  interpolate,
+  withSpring,
   Easing,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -16,7 +15,7 @@ import { Colors } from '@/constants/colors';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAP_WIDTH = SCREEN_WIDTH;
-const MAP_HEIGHT = SCREEN_HEIGHT * 0.65;
+const MAP_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 interface IslandMapProps {
   mode: 'home' | 'delivery' | 'taxi';
@@ -29,51 +28,72 @@ interface IslandMapProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-interface IslandShapeProps {
+const islandPositions = {
+  orcas: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.25 },
+  sanJuan: { x: MAP_WIDTH * 0.25, y: MAP_HEIGHT * 0.5 },
+  lopez: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.7 },
+  anacortes: { x: MAP_WIDTH * 0.78, y: MAP_HEIGHT * 0.88 },
+};
+
+function getIslandPath(id: string, cx: number, cy: number) {
+  switch (id) {
+    case 'orcas':
+      return `M ${cx - 45} ${cy} 
+              Q ${cx - 40} ${cy - 35} ${cx - 10} ${cy - 30}
+              Q ${cx + 20} ${cy - 40} ${cx + 45} ${cy - 20}
+              Q ${cx + 55} ${cy + 5} ${cx + 40} ${cy + 25}
+              Q ${cx + 15} ${cy + 35} ${cx - 15} ${cy + 30}
+              Q ${cx - 45} ${cy + 25} ${cx - 45} ${cy}`;
+    case 'sanJuan':
+      return `M ${cx - 35} ${cy - 15}
+              Q ${cx - 20} ${cy - 35} ${cx + 15} ${cy - 30}
+              Q ${cx + 40} ${cy - 20} ${cx + 35} ${cy + 10}
+              Q ${cx + 30} ${cy + 30} ${cx} ${cy + 35}
+              Q ${cx - 35} ${cy + 25} ${cx - 35} ${cy - 15}`;
+    case 'lopez':
+      return `M ${cx} ${cy - 40}
+              Q ${cx + 25} ${cy - 35} ${cx + 30} ${cy - 10}
+              Q ${cx + 35} ${cy + 20} ${cx + 15} ${cy + 40}
+              Q ${cx - 10} ${cy + 45} ${cx - 20} ${cy + 20}
+              Q ${cx - 25} ${cy - 10} ${cx} ${cy - 40}`;
+    case 'anacortes':
+      return `M ${cx - 50} ${cy + 60}
+              L ${cx - 50} ${cy - 15}
+              Q ${cx - 35} ${cy - 30} ${cx} ${cy - 25}
+              Q ${cx + 35} ${cy - 20} ${cx + 50} ${cy}
+              L ${cx + 50} ${cy + 60}
+              Z`;
+    default:
+      return '';
+  }
+}
+
+interface TouchableIslandProps {
   id: string;
-  cx: number;
-  cy: number;
-  selected: boolean;
+  isSelected: boolean;
   isOrigin?: boolean;
   isDestination?: boolean;
   onPress: () => void;
-  mode: 'home' | 'delivery' | 'taxi';
+  testID?: string;
 }
 
-function IslandShape({ id, cx, cy, selected, isOrigin, isDestination, onPress, mode }: IslandShapeProps) {
-  const pulseAnim = useSharedValue(0);
-  const glowAnim = useSharedValue(0);
+function TouchableIsland({ id, isSelected, isOrigin, isDestination, onPress, testID }: TouchableIslandProps) {
+  const scale = useSharedValue(1);
+  const pos = islandPositions[id as keyof typeof islandPositions];
+  
+  const isHighlighted = isSelected || isOrigin || isDestination;
 
-  useEffect(() => {
-    pulseAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1,
-      false
-    );
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
-    if (selected || isOrigin || isDestination) {
-      glowAnim.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 800 }),
-          withTiming(0.5, { duration: 800 })
-        ),
-        -1,
-        true
-      );
-    }
-  }, [selected, isOrigin, isDestination]);
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95, { damping: 15, stiffness: 400 });
+  };
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const scale = mode === 'home' 
-      ? interpolate(pulseAnim.value, [0, 1], [1, 1.02])
-      : 1;
-    return {
-      transform: [{ scale }],
-    };
-  });
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+  };
 
   const handlePress = () => {
     if (Platform.OS !== 'web') {
@@ -82,116 +102,34 @@ function IslandShape({ id, cx, cy, selected, isOrigin, isDestination, onPress, m
     onPress();
   };
 
-  const isHighlighted = selected || isOrigin || isDestination;
-  const highlightColor = isOrigin ? Colors.secondary : isDestination ? Colors.success : Colors.primary;
-
-  const getIslandPath = () => {
-    switch (id) {
-      case 'orcas':
-        return `M ${cx - 45} ${cy} 
-                Q ${cx - 40} ${cy - 35} ${cx - 10} ${cy - 30}
-                Q ${cx + 20} ${cy - 40} ${cx + 45} ${cy - 20}
-                Q ${cx + 55} ${cy + 5} ${cx + 40} ${cy + 25}
-                Q ${cx + 15} ${cy + 35} ${cx - 15} ${cy + 30}
-                Q ${cx - 45} ${cy + 25} ${cx - 45} ${cy}`;
-      case 'sanJuan':
-        return `M ${cx - 35} ${cy - 15}
-                Q ${cx - 20} ${cy - 35} ${cx + 15} ${cy - 30}
-                Q ${cx + 40} ${cy - 20} ${cx + 35} ${cy + 10}
-                Q ${cx + 30} ${cy + 30} ${cx} ${cy + 35}
-                Q ${cx - 35} ${cy + 25} ${cx - 35} ${cy - 15}`;
-      case 'lopez':
-        return `M ${cx} ${cy - 40}
-                Q ${cx + 25} ${cy - 35} ${cx + 30} ${cy - 10}
-                Q ${cx + 35} ${cy + 20} ${cx + 15} ${cy + 40}
-                Q ${cx - 10} ${cy + 45} ${cx - 20} ${cy + 20}
-                Q ${cx - 25} ${cy - 10} ${cx} ${cy - 40}`;
-      default:
-        return '';
-    }
-  };
+  const size = id === 'anacortes' ? 100 : 90;
 
   return (
-    <AnimatedPressable onPress={handlePress} style={animatedStyle}>
-      <G>
-        {isHighlighted && (
-          <Path
-            d={getIslandPath()}
-            fill="none"
-            stroke={highlightColor}
-            strokeWidth={4}
-            opacity={0.6}
-          />
-        )}
-        <Path
-          d={getIslandPath()}
-          fill={isHighlighted ? Colors.land : Colors.landDark}
-          stroke={Colors.sand}
-          strokeWidth={2}
-        />
-        <Circle
-          cx={cx}
-          cy={cy + 5}
-          r={4}
-          fill={Colors.sand}
-        />
-      </G>
-    </AnimatedPressable>
-  );
-}
-
-function MainlandShape({ cx, cy, selected, onPress }: { cx: number; cy: number; selected: boolean; onPress: () => void }) {
-  const handlePress = () => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    onPress();
-  };
-
-  return (
-    <Pressable onPress={handlePress}>
-      <G>
-        {selected && (
-          <Path
-            d={`M ${cx - 60} ${cy + 80}
-                L ${cx - 60} ${cy - 20}
-                Q ${cx - 40} ${cy - 40} ${cx} ${cy - 35}
-                Q ${cx + 40} ${cy - 30} ${cx + 60} ${cy}
-                L ${cx + 60} ${cy + 80}
-                Z`}
-            fill="none"
-            stroke={Colors.secondary}
-            strokeWidth={4}
-            opacity={0.6}
-          />
-        )}
-        <Path
-          d={`M ${cx - 60} ${cy + 80}
-              L ${cx - 60} ${cy - 20}
-              Q ${cx - 40} ${cy - 40} ${cx} ${cy - 35}
-              Q ${cx + 40} ${cy - 30} ${cx + 60} ${cy}
-              L ${cx + 60} ${cy + 80}
-              Z`}
-          fill={selected ? Colors.land : Colors.landDark}
-          stroke={Colors.sand}
-          strokeWidth={2}
-        />
-      </G>
-    </Pressable>
+    <AnimatedPressable
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={`Select ${id}`}
+      style={[
+        styles.touchableIsland,
+        animatedStyle,
+        {
+          left: pos.x - size / 2,
+          top: pos.y - size / 2,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          borderWidth: isHighlighted ? 3 : 0,
+          borderColor: isOrigin ? Colors.secondary : isDestination ? Colors.success : Colors.primary,
+        },
+      ]}
+    />
   );
 }
 
 function WaterBackground() {
-  const waveAnim = useSharedValue(0);
-
-  useEffect(() => {
-    waveAnim.value = withRepeat(
-      withTiming(1, { duration: 4000, easing: Easing.linear }),
-      -1,
-      false
-    );
-  }, []);
-
   return (
     <G>
       <Defs>
@@ -211,21 +149,21 @@ function WaterBackground() {
       />
       <Ellipse
         cx={MAP_WIDTH * 0.7}
-        cy={MAP_HEIGHT * 0.2}
-        rx={100}
-        ry={60}
+        cy={MAP_HEIGHT * 0.15}
+        rx={80}
+        ry={50}
         fill="url(#sunReflection)"
       />
-      {[0.2, 0.4, 0.6, 0.75].map((yPos, i) => (
+      {[0.3, 0.5, 0.65, 0.8].map((yPos, i) => (
         <Path
           key={i}
           d={`M ${-20 + i * 10} ${MAP_HEIGHT * yPos}
-              Q ${MAP_WIDTH * 0.25} ${MAP_HEIGHT * yPos - 8}
+              Q ${MAP_WIDTH * 0.25} ${MAP_HEIGHT * yPos - 6}
                 ${MAP_WIDTH * 0.5} ${MAP_HEIGHT * yPos}
-              Q ${MAP_WIDTH * 0.75} ${MAP_HEIGHT * yPos + 8}
+              Q ${MAP_WIDTH * 0.75} ${MAP_HEIGHT * yPos + 6}
                 ${MAP_WIDTH + 20} ${MAP_HEIGHT * yPos}`}
           fill="none"
-          stroke="rgba(255,255,255,0.12)"
+          stroke="rgba(255,255,255,0.1)"
           strokeWidth={1.5}
         />
       ))}
@@ -233,20 +171,39 @@ function WaterBackground() {
   );
 }
 
+function IslandSvg({ id, selected, isOrigin, isDestination }: { id: string; selected: boolean; isOrigin?: boolean; isDestination?: boolean }) {
+  const pos = islandPositions[id as keyof typeof islandPositions];
+  const isHighlighted = selected || isOrigin || isDestination;
+  const highlightColor = isOrigin ? Colors.secondary : isDestination ? Colors.success : Colors.primary;
+
+  return (
+    <G>
+      {isHighlighted && (
+        <Path
+          d={getIslandPath(id, pos.x, pos.y)}
+          fill="none"
+          stroke={highlightColor}
+          strokeWidth={4}
+          opacity={0.6}
+        />
+      )}
+      <Path
+        d={getIslandPath(id, pos.x, pos.y)}
+        fill={isHighlighted ? Colors.land : Colors.landDark}
+        stroke={Colors.sand}
+        strokeWidth={2}
+      />
+      <Circle
+        cx={pos.x}
+        cy={pos.y + 5}
+        r={4}
+        fill={Colors.sand}
+      />
+    </G>
+  );
+}
+
 function Boat({ x, y }: { x: number; y: number }) {
-  const bobAnim = useSharedValue(0);
-
-  useEffect(() => {
-    bobAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1,
-      false
-    );
-  }, []);
-
   return (
     <G transform={`translate(${x}, ${y})`}>
       <Path
@@ -264,19 +221,6 @@ function Boat({ x, y }: { x: number; y: number }) {
 }
 
 function Whale({ x, y }: { x: number; y: number }) {
-  const swimAnim = useSharedValue(0);
-
-  useEffect(() => {
-    swimAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1,
-      false
-    );
-  }, []);
-
   return (
     <G transform={`translate(${x}, ${y})`}>
       <Ellipse
@@ -298,15 +242,8 @@ function Whale({ x, y }: { x: number; y: number }) {
 }
 
 function RouteLine({ from, to }: { from: { x: number; y: number }; to: { x: number; y: number } }) {
-  const drawAnim = useSharedValue(0);
-
-  useEffect(() => {
-    drawAnim.value = 0;
-    drawAnim.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) });
-  }, [from, to]);
-
   const midX = (from.x + to.x) / 2;
-  const midY = (from.y + to.y) / 2 - 30;
+  const midY = (from.y + to.y) / 2 - 25;
 
   return (
     <G>
@@ -332,74 +269,99 @@ export default function IslandMap({
   onIslandPress, 
   onMainlandPress 
 }: IslandMapProps) {
-  const islandPositions = {
-    orcas: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.25 },
-    sanJuan: { x: MAP_WIDTH * 0.3, y: MAP_HEIGHT * 0.45 },
-    lopez: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.6 },
-    anacortes: { x: MAP_WIDTH * 0.8, y: MAP_HEIGHT * 0.75 },
-  };
-
   const showRouteLine = mode === 'taxi' && origin && destination;
   const originPos = origin ? islandPositions[origin as keyof typeof islandPositions] : null;
   const destPos = destination ? islandPositions[destination as keyof typeof islandPositions] : null;
+
+  const handleIslandPress = (id: string) => {
+    if (id === 'anacortes') {
+      if (mode === 'taxi') {
+        onIslandPress?.(id);
+      } else {
+        onMainlandPress?.();
+      }
+    } else {
+      onIslandPress?.(id);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Svg width={MAP_WIDTH} height={MAP_HEIGHT}>
         <WaterBackground />
         
-        <Boat x={MAP_WIDTH * 0.15} y={MAP_HEIGHT * 0.3} />
-        <Whale x={MAP_WIDTH * 0.75} y={MAP_HEIGHT * 0.45} />
-        <Boat x={MAP_WIDTH * 0.4} y={MAP_HEIGHT * 0.75} />
+        <Boat x={MAP_WIDTH * 0.12} y={MAP_HEIGHT * 0.35} />
+        <Whale x={MAP_WIDTH * 0.8} y={MAP_HEIGHT * 0.45} />
+        <Boat x={MAP_WIDTH * 0.35} y={MAP_HEIGHT * 0.85} />
 
         {showRouteLine && originPos && destPos && (
           <RouteLine from={originPos} to={destPos} />
         )}
 
-        <MainlandShape
-          cx={islandPositions.anacortes.x}
-          cy={islandPositions.anacortes.y}
-          selected={origin === 'anacortes' || destination === 'anacortes'}
-          onPress={() => {
-            if (mode === 'taxi') {
-              onIslandPress?.('anacortes');
-            } else {
-              onMainlandPress?.();
-            }
-          }}
+        <IslandSvg 
+          id="anacortes" 
+          selected={false}
+          isOrigin={origin === 'anacortes'}
+          isDestination={destination === 'anacortes'}
         />
-
-        <IslandShape
-          id="orcas"
-          cx={islandPositions.orcas.x}
-          cy={islandPositions.orcas.y}
+        <IslandSvg 
+          id="orcas" 
           selected={selectedIsland === 'orcas'}
           isOrigin={origin === 'orcas'}
           isDestination={destination === 'orcas'}
-          onPress={() => onIslandPress?.('orcas')}
-          mode={mode}
         />
-        <IslandShape
-          id="sanJuan"
-          cx={islandPositions.sanJuan.x}
-          cy={islandPositions.sanJuan.y}
+        <IslandSvg 
+          id="sanJuan" 
           selected={selectedIsland === 'sanJuan'}
           isOrigin={origin === 'sanJuan'}
           isDestination={destination === 'sanJuan'}
-          onPress={() => onIslandPress?.('sanJuan')}
-          mode={mode}
         />
-        <IslandShape
-          id="lopez"
-          cx={islandPositions.lopez.x}
-          cy={islandPositions.lopez.y}
+        <IslandSvg 
+          id="lopez" 
           selected={selectedIsland === 'lopez'}
           isOrigin={origin === 'lopez'}
           isDestination={destination === 'lopez'}
-          onPress={() => onIslandPress?.('lopez')}
-          mode={mode}
         />
       </Svg>
+
+      {mode !== 'home' && (
+        <>
+          <TouchableIsland
+            id="orcas"
+            isSelected={selectedIsland === 'orcas'}
+            isOrigin={origin === 'orcas'}
+            isDestination={destination === 'orcas'}
+            onPress={() => handleIslandPress('orcas')}
+            testID="island-orcas"
+          />
+          <TouchableIsland
+            id="sanJuan"
+            isSelected={selectedIsland === 'sanJuan'}
+            isOrigin={origin === 'sanJuan'}
+            isDestination={destination === 'sanJuan'}
+            onPress={() => handleIslandPress('sanJuan')}
+            testID="island-sanjuan"
+          />
+          <TouchableIsland
+            id="lopez"
+            isSelected={selectedIsland === 'lopez'}
+            isOrigin={origin === 'lopez'}
+            isDestination={destination === 'lopez'}
+            onPress={() => handleIslandPress('lopez')}
+            testID="island-lopez"
+          />
+          {mode === 'taxi' && (
+            <TouchableIsland
+              id="anacortes"
+              isSelected={false}
+              isOrigin={origin === 'anacortes'}
+              isDestination={destination === 'anacortes'}
+              onPress={() => handleIslandPress('anacortes')}
+              testID="island-anacortes"
+            />
+          )}
+        </>
+      )}
     </View>
   );
 }
@@ -408,5 +370,11 @@ const styles = StyleSheet.create({
   container: {
     width: MAP_WIDTH,
     height: MAP_HEIGHT,
+    position: 'relative',
+  },
+  touchableIsland: {
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    zIndex: 100,
   },
 });
