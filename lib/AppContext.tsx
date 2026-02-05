@@ -1,12 +1,13 @@
-import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
-import { Island, Store, Captain, AvailableRide, DeliveryDate, islands, stores, captains, availableRides, getNextDelivery } from './mockData';
+import React, { createContext, useContext, useState, useMemo, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Region, regions, getDefaultRegion, getRegion } from './regions';
 
 type ServiceMode = 'home' | 'delivery' | 'taxi';
 
 interface OrderDetails {
-  island?: Island;
-  store?: Store;
-  deliveryDate?: DeliveryDate;
+  islandId?: string;
+  storeId?: string;
+  deliveryDate?: string;
   notes?: string;
   pickupCode?: string;
   pdfUploaded?: boolean;
@@ -15,37 +16,63 @@ interface OrderDetails {
 interface RideDetails {
   from?: string;
   to?: string;
-  ride?: AvailableRide;
+  rideId?: string;
   passengers?: number;
+  contactName?: string;
+  contactPhone?: string;
 }
 
 interface AppContextValue {
   mode: ServiceMode;
   setMode: (mode: ServiceMode) => void;
-  selectedIsland: Island | null;
-  setSelectedIsland: (island: Island | null) => void;
+  selectedIslandId: string | null;
+  setSelectedIslandId: (id: string | null) => void;
   orderDetails: OrderDetails;
   setOrderDetails: (details: OrderDetails) => void;
   rideDetails: RideDetails;
   setRideDetails: (details: RideDetails) => void;
   resetOrder: () => void;
   resetRide: () => void;
-  showFerryAlert: boolean;
-  setShowFerryAlert: (show: boolean) => void;
+  region: Region;
+  setRegionById: (regionId: string) => void;
+  availableRegions: Region[];
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+const REGION_STORAGE_KEY = '@clampacked_region';
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<ServiceMode>('home');
-  const [selectedIsland, setSelectedIsland] = useState<Island | null>(null);
+  const [selectedIslandId, setSelectedIslandId] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetails>({});
   const [rideDetails, setRideDetails] = useState<RideDetails>({ passengers: 1 });
-  const [showFerryAlert, setShowFerryAlert] = useState(true);
+  const [region, setRegion] = useState<Region>(getDefaultRegion());
+
+  useEffect(() => {
+    AsyncStorage.getItem(REGION_STORAGE_KEY).then((storedRegionId) => {
+      if (storedRegionId) {
+        const storedRegion = getRegion(storedRegionId);
+        if (storedRegion) {
+          setRegion(storedRegion);
+        }
+      }
+    });
+  }, []);
+
+  const setRegionById = (regionId: string) => {
+    const newRegion = getRegion(regionId);
+    if (newRegion) {
+      setRegion(newRegion);
+      AsyncStorage.setItem(REGION_STORAGE_KEY, regionId);
+      resetOrder();
+      resetRide();
+    }
+  };
 
   const resetOrder = () => {
     setOrderDetails({});
-    setSelectedIsland(null);
+    setSelectedIslandId(null);
   };
 
   const resetRide = () => {
@@ -55,17 +82,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => ({
     mode,
     setMode,
-    selectedIsland,
-    setSelectedIsland,
+    selectedIslandId,
+    setSelectedIslandId,
     orderDetails,
     setOrderDetails,
     rideDetails,
     setRideDetails,
     resetOrder,
     resetRide,
-    showFerryAlert,
-    setShowFerryAlert,
-  }), [mode, selectedIsland, orderDetails, rideDetails, showFerryAlert]);
+    region,
+    setRegionById,
+    availableRegions: regions,
+  }), [mode, selectedIslandId, orderDetails, rideDetails, region]);
 
   return (
     <AppContext.Provider value={value}>
