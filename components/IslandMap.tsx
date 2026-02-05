@@ -11,6 +11,7 @@ import { Colors } from '@/constants/colors';
 import { Island, Region } from '@/lib/regions';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const MAP_PADDING = 50; // Padding to prevent islands from being cut off at edges
 const MAP_WIDTH = SCREEN_WIDTH;
 const MAP_HEIGHT = SCREEN_HEIGHT * 0.5;
 
@@ -27,8 +28,11 @@ interface IslandMapProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 function getIslandPath(island: Island, mapWidth: number, mapHeight: number) {
-  const cx = island.x * mapWidth;
-  const cy = island.y * mapHeight;
+  // Apply padding to keep islands away from edges
+  const usableWidth = mapWidth - (MAP_PADDING * 2);
+  const usableHeight = mapHeight - (MAP_PADDING * 2);
+  const cx = MAP_PADDING + (island.x * usableWidth);
+  const cy = MAP_PADDING + (island.y * usableHeight);
   const size = island.isMainland ? 40 : 35;
   
   if (island.isMainland) {
@@ -88,8 +92,11 @@ function TouchableIsland({
   secondaryColor,
 }: TouchableIslandProps) {
   const scale = useSharedValue(1);
-  const cx = island.x * mapWidth;
-  const cy = island.y * mapHeight;
+  // Apply same padding calculation as getIslandPath
+  const usableWidth = mapWidth - (MAP_PADDING * 2);
+  const usableHeight = mapHeight - (MAP_PADDING * 2);
+  const cx = MAP_PADDING + (island.x * usableWidth);
+  const cy = MAP_PADDING + (island.y * usableHeight);
   
   const isHighlighted = isSelected || isOrigin || isDestination;
 
@@ -203,8 +210,11 @@ function IslandSvg({
   primaryColor: string;
   secondaryColor: string;
 }) {
-  const cx = island.x * mapWidth;
-  const cy = island.y * mapHeight;
+  // Apply same padding calculation as getIslandPath
+  const usableWidth = mapWidth - (MAP_PADDING * 2);
+  const usableHeight = mapHeight - (MAP_PADDING * 2);
+  const cx = MAP_PADDING + (island.x * usableWidth);
+  const cy = MAP_PADDING + (island.y * usableHeight);
   const isHighlighted = selected || isOrigin || isDestination;
   const highlightColor = isOrigin ? secondaryColor : isDestination ? Colors.success : primaryColor;
 

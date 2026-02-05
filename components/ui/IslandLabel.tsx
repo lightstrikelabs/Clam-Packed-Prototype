@@ -4,6 +4,7 @@ import { Colors } from '@/constants/colors';
 import { Island } from '@/lib/regions';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const MAP_PADDING = 50;
 const MAP_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 interface IslandLabelProps {
@@ -11,13 +12,31 @@ interface IslandLabelProps {
   offsetTop?: number;
 }
 
+// Get a short display name for the island
+function getShortName(name: string): string {
+  // For "San Juan Island", show "San Juan"
+  // For "Orcas Island", show "Orcas"
+  // For "Lopez Island", show "Lopez"
+  const words = name.split(' ');
+  if (words.length >= 2 && words[0] === 'San') {
+    return `${words[0]} ${words[1]}`;
+  }
+  return words[0];
+}
+
 export default function IslandLabel({ island, offsetTop = 0 }: IslandLabelProps) {
-  const top = offsetTop + (island.y * MAP_HEIGHT) - 10;
-  const left = (island.x * SCREEN_WIDTH) - 40;
+  // Apply same padding calculation as IslandMap
+  const usableWidth = SCREEN_WIDTH - (MAP_PADDING * 2);
+  const usableHeight = MAP_HEIGHT - (MAP_PADDING * 2);
+  const cx = MAP_PADDING + (island.x * usableWidth);
+  const cy = MAP_PADDING + (island.y * usableHeight);
+  
+  const top = offsetTop + cy - 10;
+  const left = cx - 40;
 
   return (
     <View style={[styles.container, { top, left }]} pointerEvents="none">
-      <Text style={styles.text}>{island.name.split(' ')[0]}</Text>
+      <Text style={styles.text}>{getShortName(island.name)}</Text>
     </View>
   );
 }

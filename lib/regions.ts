@@ -47,10 +47,10 @@ export const regions: Region[] = [
     primaryColor: '#39ADB8',
     secondaryColor: '#ED9739',
     islands: [
-      { id: 'orcas', name: 'Orcas Island', x: 0.55, y: 0.22, deliveryDays: ['Tuesday', 'Friday'] },
-      { id: 'sanJuan', name: 'San Juan Island', x: 0.25, y: 0.45, deliveryDays: ['Wednesday', 'Saturday'] },
-      { id: 'lopez', name: 'Lopez Island', x: 0.55, y: 0.65, deliveryDays: ['Thursday'] },
-      { id: 'anacortes', name: 'Anacortes', x: 0.78, y: 0.82, isMainland: true },
+      { id: 'orcas', name: 'Orcas Island', x: 0.50, y: 0.20, deliveryDays: ['Tuesday', 'Friday'] },
+      { id: 'sanJuan', name: 'San Juan Island', x: 0.20, y: 0.45, deliveryDays: ['Wednesday', 'Saturday'] },
+      { id: 'lopez', name: 'Lopez Island', x: 0.50, y: 0.55, deliveryDays: ['Thursday'] },
+      { id: 'anacortes', name: 'Anacortes', x: 0.80, y: 0.75, isMainland: true },
     ],
     stores: [
       { id: 'traderjoes', name: "Trader Joe's", type: 'pdf', description: 'Upload your shopping list' },
