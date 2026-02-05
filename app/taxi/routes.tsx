@@ -11,14 +11,13 @@ import IslandMap from '@/components/IslandMap';
 import Header from '@/components/ui/Header';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import FerryAlert from '@/components/ui/FerryAlert';
 import IslandLabel from '@/components/ui/IslandLabel';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function RoutesScreen() {
   const insets = useSafeAreaInsets();
-  const { rideDetails, setRideDetails, setMode, showFerryAlert, setShowFerryAlert } = useApp();
+  const { rideDetails, setRideDetails, setMode } = useApp();
   const [origin, setOrigin] = useState<string | null>(rideDetails.from || null);
   const [destination, setDestination] = useState<string | null>(rideDetails.to || null);
   const webBottomInset = Platform.OS === 'web' ? 34 : 0;
@@ -94,10 +93,6 @@ export default function RoutesScreen() {
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + webBottomInset + 16 }]}>
-        {showFerryAlert && (
-          <FerryAlert onDismiss={() => setShowFerryAlert(false)} />
-        )}
-        
         <View style={styles.selectionContainer}>
           <Card style={styles.locationCard} variant="flat">
             <View style={styles.locationRow}>

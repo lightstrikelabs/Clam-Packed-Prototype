@@ -6,14 +6,13 @@ import { Colors } from '@/constants/colors';
 import { useApp } from '@/lib/AppContext';
 import IslandMap from '@/components/IslandMap';
 import ServiceButton from '@/components/ui/ServiceButton';
-import FerryAlert from '@/components/ui/FerryAlert';
 import IslandLabel from '@/components/ui/IslandLabel';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { setMode, showFerryAlert, setShowFerryAlert } = useApp();
+  const { setMode } = useApp();
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
   const topPadding = insets.top + webTopInset;
 
@@ -23,11 +22,6 @@ export default function HomeScreen() {
   };
 
   const handleTaxiPress = () => {
-    setMode('taxi');
-    router.push('/taxi/routes');
-  };
-
-  const handleFerryAlertPress = () => {
     setMode('taxi');
     router.push('/taxi/routes');
   };
@@ -51,13 +45,6 @@ export default function HomeScreen() {
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + (Platform.OS === 'web' ? 34 : 16) }]}>
-        {showFerryAlert && (
-          <FerryAlert 
-            onPress={handleFerryAlertPress}
-            onDismiss={() => setShowFerryAlert(false)}
-          />
-        )}
-        
         <Text style={styles.prompt}>What do you need to move?</Text>
         
         <View style={styles.buttonRow}>
