@@ -1,0 +1,155 @@
+Screen A5: Store-Specific Order Flow
+Step-by-step guided process (varies by store):
+Trader Joe's:
+"Build your list on Trader Joe's" → Link out
+"Save as PDF" → Visual how-to
+"Upload here" → File picker
+"Any notes?" → Optional text
+Confirm
+
+Safeway:
+"Go to Safeway.com" → Link
+"Set store: 1275 East Sunset Drive, Bellingham (98225)"
+"Schedule pickup for morning BEFORE delivery day"
+"Paste your pickup code" → Input
+Confirm
+
+Hela Provisions:
+"Shop Hela Provisions" → Link
+"At checkout: Pick up → Clam Packed"
+"We get notified automatically! 🎉"
+Confirm
+
+CHEF'STORE:
+"Shop CHEF'STORE" → Link
+"Add note at checkout: 'Clam Packed Delivery Pickup'"
+"Paste order number" → Input
+Confirm
+
+CHS:
+"Call/email Tod Jackson" → (360) 306-3880 / Tod.jackson3@chsinc.com
+"Tell him Clam Packed picks it up"
+"I've ordered ✓" → Button
+Confirm
+
+Azure Standard:
+"Order on Azure Standard" → Link
+"Select Anacortes / Meg Frost drop point"
+"⚠️ We pick up on YOUR delivery day, not Azure's"
+"Share order details" → Input
+Confirm
+
+Screen A6: Order Confirmation 🎉
+Confetti/celebration animation
+"You're all set! See you Tuesday! 🚚"
+Summary: Store, island, delivery date, pickup spot
+"Add to Calendar" button
+"Need a ride to pick it up? 🚤" → Cross-sell water taxi
+Back to home
+
+---
+
+FLOW B: Water Taxi (Uber for Boats)
+Screen B1: Select Route
+Same map, now in "ride mode"
+Prompt: "Where are you going? 🚤"
+Two-step selection:
+"Tap where you ARE" → Origin lights up
+"Tap where you're GOING" → Destination lights up
+Possible routes: Between any islands (Orcas ↔ San Juan ↔ Lopez) + mainland (Anacortes/Bellingham)
+Shows route line on map once both selected
+
+Screen B2: Available Rides
+Header: "Orcas → San Juan"
+On-demand option: "Request now — ~20 min pickup" with price estimate
+Scheduled rides: List of upcoming shared/scheduled departures
+"Today 2:30 PM — Captain Mike's boat — 2 seats left — $45"
+"Tomorrow 8:00 AM — Morning commuter — 4 seats left — $35"
+Filter: "Today" / "This week" / "Request custom time"
+Ferry status banner if relevant: "WSF cancelled until 6 PM"
+Screen B3: Ride Details / Booking
+Route summary: Origin → Destination
+Time: Departure + estimated arrival
+Captain card:
+Photo, name, rating (⭐ 4.9)
+Boat name + photo
+"Been running these waters for 12 years"
+Price breakdown: Base fare + any surge
+Passenger count selector (if booking for group)
+"Book this ride" → Payment
+Or "Request custom time" → Opens request form
+
+Screen B4: Ride Confirmed 🎉
+Celebration animation (wave splash?)
+"You're booked! See you at the dock 🚤"
+Summary: Date, time, pickup dock location + map
+Captain info card
+"Add to Calendar"
+Live tracking available closer to departure
+"Need groceries delivered before you go? 📦" → Cross-sell
+
+Screen B5: Live Tracking (Day of ride)
+Map showing boat location in real-time
+ETA countdown
+Captain contact button
+Dock arrival instructions
+
+---
+
+Shared Features
+Profile / Settings (accessible from header)
+Name, phone, email
+Saved islands (home island)
+Payment methods
+Order history (both goods + rides)
+Notification preferences
+
+Smart Cross-Selling
+After booking groceries: "Need a ride to pick them up?"
+After booking water taxi: "Want groceries waiting when you arrive?"
+Ferry disruption alert: "WSF cancelled — book a water taxi?" + "Your delivery might be delayed — we'll keep you posted"
+
+Notifications
+Delivery day reminders
+Ride booking confirmations
+Ferry disruption alerts
+"Your boat is 10 minutes away"
+"Your groceries are ready for pickup"
+
+---
+Tone & Microcopy
+Keep it friendly and playful throughout:
+
+"What do you need to move?" (not "Select service")
+"Where are we delivering? 🏝️" (not "Choose destination")
+"Let's do this!" (not "Submit")
+"You're all set! See you Tuesday! 🚚" (not "Order confirmed")
+"Smooth sailing! Your ride is booked 🚤" (not "Booking complete")
+Ferry alert: "Uh oh, WSF is having a day. We've got boats ready!"
+
+---
+
+Micro-interactions & Animations
+Map: Islands pulse gently, water has subtle movement
+Selection: Haptic feedback + glow effect on tap
+Route line: Animated dashed line draws between origin/destination
+Buttons: Bounce on press
+Progress: Steps check off with spring animation
+Confirmation: Confetti for groceries, wave splash for boat rides
+Loading: Little boat motoring across screen, or delivery truck driving
+Boat tracking: Smooth real-time position updates on map
+
+---
+
+Tech Stack
+Expo SDK 54 (New Architecture enabled)
+Expo Router for navigation
+Custom SVG illustrated map (preferred for the fun aesthetic) or react-native-maps
+expo-document-picker for PDF uploads
+react-native-reanimated for animations
+expo-haptics for tactile feedback
+expo-location for boat tracking
+AsyncStorage for local state
+Mock data (no backend needed for prototype)
+
+---

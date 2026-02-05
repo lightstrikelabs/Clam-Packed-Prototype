@@ -1,0 +1,87 @@
+
+Design System
+Colors:
+const colors = {
+  // Primary
+  primary: '#39ADB8',        // Teal — main brand, water vibes
+  primaryLight: '#CAE8E8',   // Light teal — cards, surfaces
+  
+  // Secondary
+  secondary: '#ED9739',      // Orange — CTAs, highlights, energy
+  
+  // Neutrals
+  text: '#393939',           // Dark gray — body text
+  textLight: '#FFFFFF',      // White text on dark
+  background: '#F4F8F3',     // Soft off-white — page background
+  surface: '#FFFFFF',        // Cards, modals
+  
+  // Semantic
+  success: '#6ABE52',        // Green — confirmations
+  warning: '#ED9739',        // Orange — alerts (ferry issues)
+  water: '#1E5F8A',          // Deep blue — water on map
+  land: '#8BC34A',           // Green — islands on map
+}
+Typography:
+const fonts = {
+  display: 'Caveat',   // Headlines — friendly, handwritten
+  body: 'Lato',        // Body text — clean, readable
+  ui: 'Inter',         // Buttons, labels — modern, crisp
+}
+
+
+Logo:
+https://clampacked.delivery/hubfs/ClamPackedDelivery-min-1.png
+
+(May need new combined branding — but start with this for prototype)
+
+---
+Mock Data
+Delivery Schedule:
+const deliverySchedule = {
+  orcas: { day: 'Tuesday', dates: ['Feb 11', 'Feb 25', 'Mar 11', 'Mar 25'] },
+  sanJuan: { day: 'Wednesday', dates: ['Feb 12', 'Feb 26', 'Mar 12', 'Mar 26'] },
+  lopez: { day: 'Thursday', dates: ['Feb 13', 'Feb 27', 'Mar 13', 'Mar 27'] },
+}
+
+
+Water Taxi Routes:
+const routes = [
+  { from: 'orcas', to: 'sanJuan', basePrice: 45, duration: '25 min' },
+  { from: 'orcas', to: 'lopez', basePrice: 55, duration: '35 min' },
+  { from: 'sanJuan', to: 'lopez', basePrice: 40, duration: '20 min' },
+  { from: 'anacortes', to: 'orcas', basePrice: 75, duration: '45 min' },
+  { from: 'anacortes', to: 'sanJuan', basePrice: 70, duration: '40 min' },
+  { from: 'anacortes', to: 'lopez', basePrice: 65, duration: '35 min' },
+]
+
+
+Mock Captains:
+const captains = [
+  { name: 'Captain Mike', boat: 'Island Hopper', rating: 4.9, years: 12 },
+  { name: 'Captain Sarah', boat: 'San Juan Spirit', rating: 4.8, years: 8 },
+  { name: 'Captain Tom', boat: 'Orca Runner', rating: 4.7, years: 15 },
+]
+---
+
+Build Priority
+Home map with service toggle (📦 Groceries | 🚤 Me)
+Water taxi flow (hot for summer launch):
+Route selection on map
+Available rides list
+Booking confirmation
+Goods delivery flow:
+Island selection
+Store selection
+Trader Joe's complete flow
+Cross-sell prompts between services
+Calendar views for both services
+Live boat tracking (even if mocked)
+---
+
+The Goal
+Build something demo-ready that shows:
+Clampacked: "Look how easy ordering groceries could be"
+Community Water Taxi: "Look how Uber-like boat booking could work"
+The combination: "These belong together — one app for island logistics"
+
+Make it polished, fun, and undeniably useful. This is your pitch to both organizations + potential investors. Ship it this summer, revenue day 1.
