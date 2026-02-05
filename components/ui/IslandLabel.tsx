@@ -1,35 +1,23 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Colors } from '@/constants/colors';
+import { Island } from '@/lib/regions';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAP_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 interface IslandLabelProps {
-  name: string;
-  position: 'orcas' | 'sanJuan' | 'lopez' | 'anacortes';
+  island: Island;
   offsetTop?: number;
 }
 
-export default function IslandLabel({ name, position, offsetTop = 0 }: IslandLabelProps) {
-  const getPosition = () => {
-    switch (position) {
-      case 'orcas':
-        return { top: offsetTop + MAP_HEIGHT * 0.12, left: SCREEN_WIDTH * 0.38 };
-      case 'sanJuan':
-        return { top: offsetTop + MAP_HEIGHT * 0.37, left: SCREEN_WIDTH * 0.05 };
-      case 'lopez':
-        return { top: offsetTop + MAP_HEIGHT * 0.55, left: SCREEN_WIDTH * 0.38 };
-      case 'anacortes':
-        return { top: offsetTop + MAP_HEIGHT * 0.72, left: SCREEN_WIDTH * 0.6 };
-      default:
-        return { top: 0, left: 0 };
-    }
-  };
+export default function IslandLabel({ island, offsetTop = 0 }: IslandLabelProps) {
+  const top = offsetTop + (island.y * MAP_HEIGHT) - 10;
+  const left = (island.x * SCREEN_WIDTH) - 40;
 
   return (
-    <View style={[styles.container, getPosition()]}>
-      <Text style={styles.text}>{name}</Text>
+    <View style={[styles.container, { top, left }]} pointerEvents="none">
+      <Text style={styles.text}>{island.name.split(' ')[0]}</Text>
     </View>
   );
 }

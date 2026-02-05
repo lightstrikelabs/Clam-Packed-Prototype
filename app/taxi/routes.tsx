@@ -6,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '@/constants/colors';
 import { useApp } from '@/lib/AppContext';
-import { getLocationName, getRouteInfo } from '@/lib/mockData';
 import IslandMap from '@/components/IslandMap';
 import Header from '@/components/ui/Header';
 import Button from '@/components/ui/Button';
@@ -17,7 +16,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function RoutesScreen() {
   const insets = useSafeAreaInsets();
-  const { rideDetails, setRideDetails, setMode } = useApp();
+  const { rideDetails, setRideDetails, setMode, region } = useApp();
   const [origin, setOrigin] = useState<string | null>(rideDetails.from || null);
   const [destination, setDestination] = useState<string | null>(rideDetails.to || null);
   const webBottomInset = Platform.OS === 'web' ? 34 : 0;
@@ -65,7 +64,15 @@ export default function RoutesScreen() {
     router.back();
   };
 
-  const routeInfo = origin && destination ? getRouteInfo(origin, destination) : null;
+  const getLocationName = (id: string) => {
+    const island = region.islands.find(i => i.id === id);
+    return island ? island.name : id;
+  };
+
+  const routeInfo = origin && destination ? {
+    duration: '25 min',
+    basePrice: region.baseTaxiRate,
+  } : null;
 
   return (
     <View style={styles.container}>
@@ -80,23 +87,27 @@ export default function RoutesScreen() {
         <View style={{ marginTop: headerHeight }}>
           <IslandMap
             mode="taxi"
+            region={region}
             origin={origin}
             destination={destination}
             onIslandPress={handleLocationPress}
           />
         </View>
         
-        <IslandLabel name="Orcas" position="orcas" offsetTop={headerHeight} />
-        <IslandLabel name="San Juan" position="sanJuan" offsetTop={headerHeight} />
-        <IslandLabel name="Lopez" position="lopez" offsetTop={headerHeight} />
-        <IslandLabel name="Anacortes" position="anacortes" offsetTop={headerHeight} />
+        {region.islands.map((island) => (
+          <IslandLabel 
+            key={island.id}
+            island={island} 
+            offsetTop={headerHeight} 
+          />
+        ))}
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + webBottomInset + 16 }]}>
         <View style={styles.selectionContainer}>
           <Card style={styles.locationCard} variant="flat">
             <View style={styles.locationRow}>
-              <View style={[styles.dot, { backgroundColor: Colors.secondary }]} />
+              <View style={[styles.dot, { backgroundColor: region.secondaryColor }]} />
               <View style={styles.locationInfo}>
                 <Text style={styles.locationLabel}>From</Text>
                 <Text style={styles.locationName}>
@@ -109,7 +120,7 @@ export default function RoutesScreen() {
               title=""
               onPress={handleSwap}
               variant="ghost"
-              icon={<Ionicons name="swap-vertical" size={24} color={Colors.primary} />}
+              icon={<Ionicons name="swap-vertical" size={24} color={region.primaryColor} />}
               style={styles.swapButton}
             />
             
@@ -132,7 +143,7 @@ export default function RoutesScreen() {
               </View>
               <View style={styles.routeDivider} />
               <View style={styles.routeDetail}>
-                <Text style={styles.routePrice}>${routeInfo.basePrice}</Text>
+                <Text style={[styles.routePrice, { color: region.secondaryColor }]}>${routeInfo.basePrice}</Text>
                 <Text style={styles.routePriceLabel}>per person</Text>
               </View>
             </Card>
@@ -233,7 +244,6 @@ const styles = StyleSheet.create({
   routePrice: {
     fontFamily: 'Caveat_700Bold',
     fontSize: 28,
-    color: Colors.secondary,
   },
   routePriceLabel: {
     fontFamily: 'Lato_400Regular',

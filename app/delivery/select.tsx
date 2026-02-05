@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/colors';
 import { useApp } from '@/lib/AppContext';
-import { islands } from '@/lib/mockData';
 import IslandMap from '@/components/IslandMap';
 import Header from '@/components/ui/Header';
 import Button from '@/components/ui/Button';
@@ -14,7 +13,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function SelectIslandScreen() {
   const insets = useSafeAreaInsets();
-  const { setSelectedIsland, setMode } = useApp();
+  const { setSelectedIslandId, setMode, region } = useApp();
   const [selected, setSelected] = useState<string | null>(null);
   const webBottomInset = Platform.OS === 'web' ? 34 : 0;
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
@@ -25,9 +24,8 @@ export default function SelectIslandScreen() {
   };
 
   const handleContinue = () => {
-    const island = islands.find(i => i.id === selected);
-    if (island) {
-      setSelectedIsland(island);
+    if (selected) {
+      setSelectedIslandId(selected);
       router.push(`/delivery/${selected}`);
     }
   };
@@ -37,7 +35,8 @@ export default function SelectIslandScreen() {
     router.back();
   };
 
-  const selectedIsland = islands.find(i => i.id === selected);
+  const selectedIsland = region.islands.find(i => i.id === selected);
+  const deliverableIslands = region.islands.filter(i => !i.isMainland);
 
   return (
     <View style={styles.container}>
@@ -52,28 +51,32 @@ export default function SelectIslandScreen() {
         <View style={{ marginTop: headerHeight }}>
           <IslandMap
             mode="delivery"
+            region={region}
             selectedIsland={selected}
             onIslandPress={handleIslandPress}
           />
         </View>
         
-        <IslandLabel name="Orcas" position="orcas" offsetTop={headerHeight} />
-        <IslandLabel name="San Juan" position="sanJuan" offsetTop={headerHeight} />
-        <IslandLabel name="Lopez" position="lopez" offsetTop={headerHeight} />
+        {region.islands.map((island) => (
+          <IslandLabel 
+            key={island.id}
+            island={island} 
+            offsetTop={headerHeight} 
+          />
+        ))}
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + webBottomInset + 16 }]}>
         <Text style={styles.prompt}>Tap an island to select</Text>
         
         {selectedIsland && (
-          <View style={styles.selectionInfo}>
-            <Text style={styles.selectionTitle}>{selectedIsland.name}</Text>
-            <Text style={styles.selectionDetail}>
-              Deliveries on {selectedIsland.deliveryDay}s
-            </Text>
-            <Text style={styles.selectionDetail}>
-              Pickup at {selectedIsland.pickupLocation}
-            </Text>
+          <View style={[styles.selectionInfo, { backgroundColor: region.primaryColor + '20' }]}>
+            <Text style={[styles.selectionTitle, { color: region.primaryColor }]}>{selectedIsland.name}</Text>
+            {selectedIsland.deliveryDays && (
+              <Text style={styles.selectionDetail}>
+                Deliveries on {selectedIsland.deliveryDays.join(' & ')}
+              </Text>
+            )}
           </View>
         )}
         
@@ -118,7 +121,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   selectionInfo: {
-    backgroundColor: Colors.primaryLight,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
@@ -127,7 +129,6 @@ const styles = StyleSheet.create({
   selectionTitle: {
     fontFamily: 'Caveat_700Bold',
     fontSize: 32,
-    color: Colors.primary,
     marginBottom: 8,
   },
   selectionDetail: {

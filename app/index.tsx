@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Platform, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { Colors } from '@/constants/colors';
 import { useApp } from '@/lib/AppContext';
 import IslandMap from '@/components/IslandMap';
@@ -12,7 +14,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { setMode } = useApp();
+  const { setMode, region } = useApp();
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
   const topPadding = insets.top + webTopInset;
 
@@ -26,22 +28,42 @@ export default function HomeScreen() {
     router.push('/taxi/routes');
   };
 
+  const handleSettingsPress = () => {
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    router.push('/settings');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
         <View style={[styles.headerOverlay, { paddingTop: topPadding + 8 }]}>
-          <Text style={styles.logo}>Clam Packed</Text>
-          <Text style={styles.tagline}>San Juan Islands Logistics</Text>
+          <Pressable 
+            style={styles.settingsButton} 
+            onPress={handleSettingsPress}
+            hitSlop={10}
+          >
+            <Ionicons name="settings-outline" size={24} color="#fff" />
+          </Pressable>
+          <View style={styles.titleContainer}>
+            <Text style={styles.logo}>{region.brandName}</Text>
+            <Text style={styles.tagline}>{region.name}</Text>
+          </View>
+          <View style={styles.settingsPlaceholder} />
         </View>
         
         <View style={{ marginTop: topPadding + 60 }}>
-          <IslandMap mode="home" />
+          <IslandMap mode="home" region={region} />
         </View>
         
-        <IslandLabel name="Orcas" position="orcas" offsetTop={topPadding + 60} />
-        <IslandLabel name="San Juan" position="sanJuan" offsetTop={topPadding + 60} />
-        <IslandLabel name="Lopez" position="lopez" offsetTop={topPadding + 60} />
-        <IslandLabel name="Anacortes" position="anacortes" offsetTop={topPadding + 60} />
+        {region.islands.map((island) => (
+          <IslandLabel 
+            key={island.id}
+            island={island} 
+            offsetTop={topPadding + 60} 
+          />
+        ))}
       </View>
       
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + (Platform.OS === 'web' ? 34 : 16) }]}>
@@ -52,14 +74,14 @@ export default function HomeScreen() {
             title="My Groceries"
             subtitle="Bulk delivery"
             icon="cube"
-            color={Colors.primary}
+            color={region.primaryColor}
             onPress={handleDeliveryPress}
           />
           <ServiceButton
             title="Me"
             subtitle="Water taxi"
             icon="boat"
-            color={Colors.secondary}
+            color={region.secondaryColor}
             onPress={handleTaxiPress}
           />
         </View>
@@ -84,43 +106,57 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     paddingHorizontal: 20,
+    flexDirection: 'row',
     alignItems: 'center',
+  },
+  settingsButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  settingsPlaceholder: {
+    width: 40,
   },
   logo: {
     fontFamily: 'Caveat_700Bold',
-    fontSize: 42,
-    color: Colors.textLight,
+    fontSize: 36,
+    color: '#fff',
     textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 0, height: 2 },
+    textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 4,
   },
   tagline: {
     fontFamily: 'Lato_400Regular',
     fontSize: 14,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: 4,
+    color: 'rgba(255,255,255,0.9)',
+    marginTop: -4,
   },
   bottomSheet: {
     backgroundColor: Colors.background,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingTop: 24,
-    paddingHorizontal: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingTop: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 10,
+    elevation: 8,
   },
   prompt: {
     fontFamily: 'Caveat_700Bold',
-    fontSize: 28,
+    fontSize: 24,
     color: Colors.text,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   buttonRow: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
   },
 });
