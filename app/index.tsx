@@ -28,11 +28,18 @@ export default function HomeScreen() {
     router.push('/taxi/routes');
   };
 
-  const handleSettingsPress = () => {
+  const handleAdminPress = () => {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     router.push('/settings');
+  };
+
+  const handleOperatorPress = () => {
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    router.push('/operator');
   };
 
   return (
@@ -40,19 +47,27 @@ export default function HomeScreen() {
       <View style={styles.mapContainer}>
         <View style={[styles.headerOverlay, { paddingTop: topPadding + 8 }]}>
           <Pressable 
-            style={styles.settingsButton} 
-            onPress={handleSettingsPress}
+            style={styles.headerButton} 
+            onPress={handleAdminPress}
             hitSlop={10}
-            testID="settings-button"
-            accessibilityLabel="Settings"
+            testID="admin-button"
+            accessibilityLabel="Admin Settings"
           >
-            <Ionicons name="settings-outline" size={24} color="#fff" />
+            <Ionicons name="key-outline" size={22} color="#fff" />
           </Pressable>
           <View style={styles.titleContainer}>
             <Text style={styles.logo}>{region.brandName}</Text>
             <Text style={styles.tagline}>{region.name}</Text>
           </View>
-          <View style={styles.settingsPlaceholder} />
+          <Pressable 
+            style={styles.headerButton} 
+            onPress={handleOperatorPress}
+            hitSlop={10}
+            testID="operator-button"
+            accessibilityLabel="Operator Settings"
+          >
+            <Ionicons name="briefcase-outline" size={22} color="#fff" />
+          </Pressable>
         </View>
         
         <View style={{ marginTop: topPadding + 60 }}>
@@ -111,7 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  settingsButton: {
+  headerButton: {
     width: 40,
     height: 40,
     justifyContent: 'center',
@@ -120,9 +135,6 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
     alignItems: 'center',
-  },
-  settingsPlaceholder: {
-    width: 40,
   },
   logo: {
     fontFamily: 'Caveat_700Bold',

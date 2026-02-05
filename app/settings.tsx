@@ -24,7 +24,7 @@ export default function SettingsScreen() {
   return (
     <View style={styles.container}>
       <Header 
-        title="Settings"
+        title="Admin Settings"
         onBackPress={() => router.back()}
       />
       
@@ -32,9 +32,14 @@ export default function SettingsScreen() {
         style={styles.content}
         contentContainerStyle={{ paddingBottom: insets.bottom + webBottomInset + 20 }}
       >
-        <Text style={styles.sectionTitle}>Select Your Region</Text>
+        <View style={styles.adminBadge}>
+          <Ionicons name="shield-checkmark" size={16} color="#fff" />
+          <Text style={styles.adminBadgeText}>Admin Only</Text>
+        </View>
+        
+        <Text style={styles.sectionTitle}>Select Region</Text>
         <Text style={styles.sectionSubtitle}>
-          Choose your island community to see local stores and water taxi options
+          Configure which island community this app serves
         </Text>
         
         {availableRegions.map((r) => {
@@ -106,6 +111,24 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+  },
+  adminBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#6B7280',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 6,
+    marginBottom: 20,
+  },
+  adminBadgeText: {
+    fontFamily: 'Lato_700Bold',
+    fontSize: 12,
+    color: '#fff',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   sectionTitle: {
     fontFamily: 'Caveat_700Bold',
