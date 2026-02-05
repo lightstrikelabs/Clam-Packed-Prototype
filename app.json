@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Clam Packed Delivery",
-    "slug": "clam-packed-delivery",
+    "name": "Island Hopper",
+    "slug": "islandhopper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "islandhop",
+    "scheme": "islandhopper",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -15,10 +15,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.islandhop"
+      "bundleIdentifier": "com.islandhopper.app"
     },
     "android": {
-      "package": "com.islandhop",
+      "package": "com.islandhopper.app",
       "adaptiveIcon": {
         "backgroundColor": "#1E5F8A",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
