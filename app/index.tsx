@@ -36,7 +36,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.mapContainer}>
         <View style={[styles.headerOverlay, { paddingTop: topPadding + 8 }]}>
-          <Text style={styles.logo}>Island Hop</Text>
+          <Text style={styles.logo}>Clam Packed</Text>
           <Text style={styles.tagline}>San Juan Islands Logistics</Text>
         </View>
         

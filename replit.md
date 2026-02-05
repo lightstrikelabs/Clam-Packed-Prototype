@@ -1,8 +1,8 @@
-# Island Hop
+# Clam Packed Delivery
 
 ## Overview
 
-Island Hop is a mobile-first logistics application serving the San Juan Islands. It provides two core services:
+Clam Packed Delivery is a mobile-first logistics application serving the San Juan Islands. It provides two core services:
 
 1. **Grocery Delivery** - Users order from partner stores (Trader Joe's, Safeway, Hela Provisions, etc.), and the service handles shopping, ferry transport, and island delivery
 2. **Water Taxi** - Inter-island transportation booking with local captains, serving as an alternative when ferries are disrupted

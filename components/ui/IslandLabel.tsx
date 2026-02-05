@@ -15,13 +15,13 @@ export default function IslandLabel({ name, position, offsetTop = 0 }: IslandLab
   const getPosition = () => {
     switch (position) {
       case 'orcas':
-        return { top: offsetTop + MAP_HEIGHT * 0.15, left: SCREEN_WIDTH * 0.38 };
+        return { top: offsetTop + MAP_HEIGHT * 0.12, left: SCREEN_WIDTH * 0.38 };
       case 'sanJuan':
-        return { top: offsetTop + MAP_HEIGHT * 0.42, left: SCREEN_WIDTH * 0.05 };
+        return { top: offsetTop + MAP_HEIGHT * 0.37, left: SCREEN_WIDTH * 0.05 };
       case 'lopez':
-        return { top: offsetTop + MAP_HEIGHT * 0.6, left: SCREEN_WIDTH * 0.38 };
+        return { top: offsetTop + MAP_HEIGHT * 0.55, left: SCREEN_WIDTH * 0.38 };
       case 'anacortes':
-        return { top: offsetTop + MAP_HEIGHT * 0.78, left: SCREEN_WIDTH * 0.6 };
+        return { top: offsetTop + MAP_HEIGHT * 0.72, left: SCREEN_WIDTH * 0.6 };
       default:
         return { top: 0, left: 0 };
     }

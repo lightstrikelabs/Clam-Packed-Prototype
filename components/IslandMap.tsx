@@ -29,10 +29,10 @@ interface IslandMapProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const islandPositions = {
-  orcas: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.25 },
-  sanJuan: { x: MAP_WIDTH * 0.25, y: MAP_HEIGHT * 0.5 },
-  lopez: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.7 },
-  anacortes: { x: MAP_WIDTH * 0.78, y: MAP_HEIGHT * 0.88 },
+  orcas: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.22 },
+  sanJuan: { x: MAP_WIDTH * 0.25, y: MAP_HEIGHT * 0.45 },
+  lopez: { x: MAP_WIDTH * 0.55, y: MAP_HEIGHT * 0.65 },
+  anacortes: { x: MAP_WIDTH * 0.78, y: MAP_HEIGHT * 0.82 },
 };
 
 function getIslandPath(id: string, cx: number, cy: number) {
@@ -57,11 +57,11 @@ function getIslandPath(id: string, cx: number, cy: number) {
               Q ${cx - 10} ${cy + 45} ${cx - 20} ${cy + 20}
               Q ${cx - 25} ${cy - 10} ${cx} ${cy - 40}`;
     case 'anacortes':
-      return `M ${cx - 50} ${cy + 60}
-              L ${cx - 50} ${cy - 15}
-              Q ${cx - 35} ${cy - 30} ${cx} ${cy - 25}
-              Q ${cx + 35} ${cy - 20} ${cx + 50} ${cy}
-              L ${cx + 50} ${cy + 60}
+      return `M ${cx - 40} ${cy + 30}
+              L ${cx - 40} ${cy - 15}
+              Q ${cx - 25} ${cy - 28} ${cx} ${cy - 23}
+              Q ${cx + 25} ${cy - 18} ${cx + 40} ${cy}
+              L ${cx + 40} ${cy + 30}
               Z`;
     default:
       return '';
