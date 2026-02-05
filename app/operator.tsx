@@ -18,6 +18,7 @@ export default function OperatorScreen() {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
+    router.push(`/operator/${option}` as any);
   };
 
   return (
