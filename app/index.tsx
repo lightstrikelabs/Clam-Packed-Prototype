@@ -112,7 +112,12 @@ export default function HomeScreen() {
               <Ionicons name="key-outline" size={22} color="#fff" />
             </Pressable>
           </Animated.View>
-          <Pressable onPress={handleLogoPress} style={styles.titleContainer}>
+          <Pressable 
+            onPress={handleLogoPress} 
+            style={styles.titleContainer}
+            testID="logo-button"
+            hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}
+          >
             <Animated.View style={logoAnimatedStyle}>
               <Text style={styles.logo}>{region.brandName}</Text>
             </Animated.View>
