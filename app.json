@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Island Hopper",
-    "slug": "islandhopper",
+    "slug": "island0hopper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,10 +15,13 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.islandhopper.app"
+      "bundleIdentifier": "com.island-hopper.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "package": "com.islandhopper.app",
+      "package": "com.island-hopper.app",
       "adaptiveIcon": {
         "backgroundColor": "#1E5F8A",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -42,6 +45,15 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": "https://replit.com/"
+      },
+      "eas": {
+        "projectId": "e2743770-7c79-4164-8885-4a104c9a16e5"
+      }
+    },
+    "owner": "lightstrikelabs"
   }
 }
